@@ -21,3 +21,4 @@
 ## TODO:
 
 - Fetch ids for competition titles (constants.py)
+- Change to local whisper ai use?

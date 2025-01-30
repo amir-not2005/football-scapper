@@ -44,8 +44,9 @@ HEADERS = {
     'sec-ch-ua-mobile': '?0',
     'sec-ch-ua-platform': '"macOS"',
 }
-BASE_URL = 'https://footballia.eu/goals'
+BASE_URL = 'https://footballia.eu'
 COMPETITION_TITLE = {
-    "1": "Champions League",
-    "4": "World Cup"  
+    "Champions League": 1,
+    "World Cup": 4
 }
+API_KEY = "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"

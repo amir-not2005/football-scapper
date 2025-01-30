@@ -1,5 +1,5 @@
 import requests
-from constants import COOKIES, HEADERS, BASE_URL
+from constants import BASE_URL
 
 
 '''
@@ -38,9 +38,33 @@ def fetch_competition_vids(competition_id, page):
         'page': page
     }
 
-    request = requests.request("GET", BASE_URL, params=params)
+    request = requests.request("GET", BASE_URL+"/goals", params=params)
     json_data = request.json()
     
-    return json_data # Not finished yet
+    return json_data['goals'] # Not finished yet
 
-print(fetch_competition_vids(4, 1))
+
+'''
+Save video to "video-raw/rivaldo-vitor-borba-ferreira-4239.mp4" based on the URL of the video:
+
+"https://footballia.eu/uploads/goal/source_file/8147/diego-martin-forlan-corazo-8147.mp4"
+
+by get request
+
+'''
+
+def download_vid(file_path):
+    print(BASE_URL+file_path)
+    request = requests.request("GET", BASE_URL+file_path, stream=True)
+    
+    if request.status_code == 200:
+        file_name = file_path.split("/")[-1]
+        with open("video-raw/"+file_name, "wb") as f:
+            for chunk in request.iter_content(chunk_size=8192):
+                f.write(chunk)
+        print(f"Video {file_name} downloaded ")
+
+    else:
+        print(f"Failed to download video {file_name}")
+
+#download_vid(fetch_competition_vids(COMPETITION_TITLE["World Cup"], 13)[0]["file"])
