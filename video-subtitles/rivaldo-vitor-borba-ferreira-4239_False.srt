@@ -1,0 +1,32 @@
+1
+00:00:00,000 --> 00:00:02,000
+Seu Betran pipocou, saiu no lance.
+
+2
+00:00:03,000 --> 00:00:05,000
+O Brasil se atrapalha na saída de bola. Deu certo!
+
+3
+00:00:05,000 --> 00:00:07,000
+Ronaldinho Gaúcho! Partiu o Rivaldo!
+
+4
+00:00:07,000 --> 00:00:09,000
+Ainda ele! Fez a fita!
+
+5
+00:00:09,000 --> 00:00:11,000
+Botou na frente! Tocou!
+
+6
+00:00:11,000 --> 00:00:13,000
+Pra Rivaldo, pra esquerda! Bateu!
+
+7
+00:00:13,000 --> 00:00:15,000
+Goool!
+
+8
+00:00:15,000 --> 00:00:17,000
+Brasil!
+

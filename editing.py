@@ -14,7 +14,7 @@ def video_ratio(input_file_path, social_media):
 
   file_name = os.path.basename(input_file_path)
   
-  output_file = f"video-ratio/ratio-{file_name}"
+  output_file = f"video-ratio/{file_name}"
 
   if social_media == "instagram":
     width, height = 1080, 1920
@@ -42,7 +42,7 @@ def video_text(input_file_path, text, social_media, font_size, font_color):
 
   file_name = os.path.basename(input_file_path)
   
-  output_file = f"video-ratio/text-{file_name}"
+  output_file = f"video-text/{file_name}"
 
   if social_media == "instagram":
     width, height = 1080, 1920
@@ -86,7 +86,7 @@ def video_transcribe(input_file_path, quality=128, local=False, model=False):
     
     file_name = os.path.basename(input_file_path)
   
-    output_file = f"video-ratio/subtitles-{file_name}"
+    output_file = f"video-subtitles/{file_name}"
 
     language = False
     prompt = "focus on natural speech"
@@ -105,16 +105,18 @@ def video_transcribe(input_file_path, quality=128, local=False, model=False):
             subtitle_path = save_transcription_as_srt(transcription, audio_path, language)
 
         print("Transcription complete. Srt file saved.")
+
+        return subtitle_path
     except Exception as e:
         print("Error", f"An error occurred during transcription: {e}")
     
-    return subtitle_path
+    
 
-def add_subtitles_to_video(input_video_path, subtitles_file):
+def add_subtitles_to_video(input_video_path, subtitles_file, font_size):
 
   file_name = os.path.basename(input_video_path)
   
-  output_file = f"video-ratio/text-{file_name}"
+  output_file = f"video-final/{file_name}"
 
   """
   Adds subtitles to the input video.
@@ -128,7 +130,7 @@ def add_subtitles_to_video(input_video_path, subtitles_file):
   command = [
       'ffmpeg',
       '-i', input_video_path,
-      '-vf', f"subtitles={subtitles_file}",
+      '-vf', f"subtitles={subtitles_file}:force_style='FontSize={font_size}'",  # Add FontSize
       '-c:v', 'libx264',
       '-c:a', 'copy',
       output_file
@@ -142,15 +144,15 @@ def add_subtitles_to_video(input_video_path, subtitles_file):
   
   return output_file
 
-def edit_video(input_file, output_file, social_media):
-  output_ratio_file = video_ratio(input_file, output_file, social_media)
-  output_text_file = video_text(output_ratio_file, output_file, "Placeholder 1 vs Placeholder 2", social_media, 48, "white")
+def edit_video(input_file, social_media):
+  output_ratio_file = video_ratio(input_file, social_media)
+  output_text_file = video_text(output_ratio_file, "Placeholder 1 vs Placeholder 2", social_media, 48, "white")
   subtitle_path = video_transcribe(output_text_file, quality=128, local=False, model=False)
-  output_final_file = add_subtitles_to_video(output_text_file, subtitle_path)
+  output_final_file = add_subtitles_to_video(output_text_file, subtitle_path, 12)
 
   return output_final_file
 
-edit_video("video-raw/rivaldo-vitor-borba-ferreira-4239.mp4")
+edit_video("video-raw/rivaldo-vitor-borba-ferreira-4239.mp4", "instagram")
    
 
 # Example usage:

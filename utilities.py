@@ -67,7 +67,7 @@ def save_transcription_as_srt(transcription, audio_path, language):
 
 
 def convert_to_mp3(input_file_path, quality):
-    output_audio = f"video-audio/{os.path.splitext(input_file_path)[0]}.mp3"
+    output_audio = f"video-audio/{os.path.basename(os.path.splitext(input_file_path)[0])}.mp3"
     try: 
         subprocess.run(
             [
