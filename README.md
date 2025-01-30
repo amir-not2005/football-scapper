@@ -22,3 +22,4 @@
 
 - Fetch ids for competition titles (constants.py)
 - Change to local whisper ai use?
+- Modify scrapper to fetch videos of specific year , tournament , player

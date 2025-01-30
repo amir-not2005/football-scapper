@@ -1,6 +1,6 @@
 import subprocess
 import os
-from utilities import whisperapi_audio, save_transcription_as_srt, convert_to_mp3
+from transcribe_utilities import whisperapi_audio, save_transcription_as_srt, convert_to_mp3
 
 def video_ratio(input_file_path, social_media):
   """
@@ -38,16 +38,21 @@ def video_ratio(input_file_path, social_media):
     print(f"Error processing video: {e}")
     return False
 
-def video_text(input_file_path, text, social_media, font_size, font_color):
+def video_text(input_file_path, video_description, social_media, font_size, font_color):
 
   file_name = os.path.basename(input_file_path)
-  
   output_file = f"video-text/{file_name}"
 
   if social_media == "instagram":
     width, height = 1080, 1920
   if social_media == "youtube":
     width, height = 900, 1600
+
+  font_path = "assets/Zain-Light.ttf"
+  padding = 10
+  text_teams = video_description['teams']
+  text_scorer = video_description['scorer']
+  text_date = video_description['date']
 
   """
   Adds text overlay to the input video.
@@ -62,10 +67,37 @@ def video_text(input_file_path, text, social_media, font_size, font_color):
     font_color: Color of the text (e.g., 'white', 'red', 'black').
   """
 
+  y_team = padding + height/8  # Teams
+  y_date = y_team + font_size + padding  # Date
+  y_scorer = y_date + font_size + padding  # Scorer
+
   command = [
       'ffmpeg',
       '-i', input_file_path,
-      '-vf', f"drawtext=text='{text}':fontfile=/path/to/your/font.ttf:fontsize={font_size}:fontcolor={font_color}:x=(w-text_w)/2:y={height/4}",
+      '-vf',
+      f"""
+      drawtext=
+          text='{text_teams}':
+          fontfile='{font_path}':
+          fontsize={font_size}:
+          fontcolor={font_color}:
+          x=(w-text_w)/2:
+          y={y_team},
+      drawtext=
+          text='{text_date}':
+          fontfile='{font_path}':
+          fontsize={font_size}:
+          fontcolor={font_color}:
+          x=(w-text_w)/2:
+          y={y_date},
+      drawtext=
+          text='{text_scorer}':
+          fontfile='{font_path}':
+          fontsize={font_size}:
+          fontcolor={font_color}:
+          x=(w-text_w)/2:
+          y={y_scorer}
+      """,  # Multi-line -vf for readability
       '-c:v', 'libx264',
       '-c:a', 'copy',
       output_file
@@ -79,16 +111,12 @@ def video_text(input_file_path, text, social_media, font_size, font_color):
     print(f"Error adding text to video: {e}")
     return False
 
-#if video_ratio("video-raw/ferenc-puskas-110478.mp4", "video-ratio/ratio-ferenc-puskas-110478.mp4", "instagram"):
-#  video_text("video-ratio/ratio-ferenc-puskas-110478.mp4", "video-text/text-ferenc-puskas-110478.mp4", "Placeholder1 vs Placeholder2", "instagram", 48, "white")
-
 def video_transcribe(input_file_path, quality=128, local=False, model=False):
     
     file_name = os.path.basename(input_file_path)
   
     output_file = f"video-subtitles/{file_name}"
 
-    language = False
     prompt = "focus on natural speech"
 
     if input_file_path.lower().endswith(".mp4"):
@@ -101,8 +129,8 @@ def video_transcribe(input_file_path, quality=128, local=False, model=False):
             #local_whisper(file_path, model, language, prompt) this function is commented out in utilities.py file
             pass # ! change if convertation to local model is needed
         else:
-            transcription = whisperapi_audio(audio_file, language, prompt)
-            subtitle_path = save_transcription_as_srt(transcription, audio_path, language)
+            transcription = whisperapi_audio(audio_file, prompt)
+            subtitle_path = save_transcription_as_srt(transcription, audio_path)
 
         print("Transcription complete. Srt file saved.")
 
@@ -144,28 +172,10 @@ def add_subtitles_to_video(input_video_path, subtitles_file, font_size):
   
   return output_file
 
-def edit_video(input_file, social_media):
+def edit_video(input_file, social_media, video_description):  
   output_ratio_file = video_ratio(input_file, social_media)
-  output_text_file = video_text(output_ratio_file, "Placeholder 1 vs Placeholder 2", social_media, 48, "white")
+  output_text_file = video_text(output_ratio_file, video_description, social_media, 48, "white")
   subtitle_path = video_transcribe(output_text_file, quality=128, local=False, model=False)
   output_final_file = add_subtitles_to_video(output_text_file, subtitle_path, 12)
 
   return output_final_file
-
-edit_video("video-raw/rivaldo-vitor-borba-ferreira-4239.mp4", "instagram")
-   
-
-# Example usage:
-#video_name = "rivaldo-vitor-borba-ferreira-4239.mp4"
-#input_video = 'video-raw/rivaldo-vitor-borba-ferreira-4239.mp4'
-#output_audio = 'video-subtitles/audio-rivaldo-vitor-borba-ferreira-4239.mp3'
-#credentials_path = 'assets/high-ace-449308-i2-df5a2e758333.json' 
-#output_srt = 'video-subtitles/rivaldo-vitor-borba-ferreira-4239.en.srt'
-#output_video_with_subtitles = 'video-final/final-rivaldo-vitor-borba-ferreira-4239.mp4'
-
-#extract_audio(input_video, output_audio)
-#transcripts, detected_language = transcribe_audio_auto_language(output_audio, credentials_path)
-#create_srt_file(transcripts, output_srt)
-#add_subtitles_to_video(input_video, output_srt, output_video_with_subtitles)
-
-#print(f"Detected language: {detected_language}")
