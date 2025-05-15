@@ -158,7 +158,7 @@ def add_subtitles_to_video(input_video_path, subtitles_file, font_size):
   command = [
       'ffmpeg',
       '-i', input_video_path,
-      '-vf', f"subtitles={subtitles_file}:force_style='FontSize={font_size}'",  # Add FontSize
+      '-vf', f"subtitles={subtitles_file}:force_style='FontSize={font_size},Alignment=2,MarginV=20''",  # Add FontSize
       '-c:v', 'libx264',
       '-c:a', 'copy',
       output_file

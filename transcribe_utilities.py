@@ -73,6 +73,9 @@ def convert_to_mp3(input_file_path, quality):
     return output_audio
 
 '''
+
+Block of code for the local use of whisper.ai tech.
+
 def local_whisper(audio_file, model, language, prompt):
     audio_path = audio_file
     model = model
